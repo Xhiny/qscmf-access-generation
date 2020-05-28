@@ -11,6 +11,7 @@ class Node implements Generator
     // 设置最顶部(level=1)的node id值
     public static $firstId;
     public static $tableName= 'qs_node';
+    public static $module = 'admin';
     /**
      * 生成节点数据，
      * @param $nodeData  二维数组
@@ -155,23 +156,31 @@ class Node implements Generator
      */
     public static function setFirstNode($firstId = null){
         if(is_numeric($firstId) && !empty($firstId) && $firstId > 0){
-            return self::$firstId = $firstId;
+            $data = self::getOne(['id'=>$firstId]);
+            self::$module = $data->name;
+            self::$firstId = $firstId;
+            return self::$firstId;
         }
         if (!empty($firstId) && is_string($firstId)){
-            $admin = DB::table(self::$tableName)
-                ->where('name', $firstId)
-                ->where('level',1)
-                ->first();
-            return self::$firstId = $admin->id;
+            self::$module = $firstId;
+            $map =[
+                'name'=> $firstId,
+                'level'=> 1,
+            ];
+            $admin = self::getOne($map);
+            self::$firstId = $admin->id;
+            return self::$firstId;
         }
         if (!empty(self::$firstId)){
             return self::$firstId;
         }
-        $admin = DB::table(self::$tableName)
-            ->where('name', 'admin')
-            ->where('level',1)
-            ->first();
-        return self::$firstId = $admin->id;
+        $map =[
+            'name'=> self::$module,
+            'level'=> 1,
+        ];
+        $admin = self::getOne($map);
+        self::$firstId = $admin->id;
+        return self::$firstId;
     }
 
     /**
