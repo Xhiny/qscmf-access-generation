@@ -21,6 +21,9 @@ class Access implements Generator
         }
         // 注意这里新增的节点不会进行回滚操作，已存在的节点也不会创建
         Node::up($data, $firstNode);
+        /**
+         * 创建 $firstNode控制节点
+         */
         try{
             DB::beginTransaction();
             foreach ($data as $key => $value){
@@ -68,6 +71,9 @@ class Access implements Generator
                     $access = self::getMapForData($action);
                     self::delete($access);
                 }
+                /**
+                 * 查询是否还存在子节点，不存在删除控制器
+                 */
             }
             DB::commit();
         }catch (\Exception $e){
