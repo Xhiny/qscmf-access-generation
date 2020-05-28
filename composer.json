@@ -1,0 +1,46 @@
+{
+    "name": "quansitech/qscmf-access-generation",
+    "description": "laravel for tp3.2 as a tools",
+    "type": "library",
+    "keywords": [
+        "laravel-admin",
+        "thinkphp3.2"
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "laravel/framework": "~5.8.0",
+        "phpunit/phpunit": "^8.0",
+        "laravel/dusk": "^5.0",
+        "mockery/mockery": "^1.2",
+        "fzaninotto/faker": "^1.4",
+        "doctrine/dbal": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "quansitech\\dataGenerate\\": "src/data-generate"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "quansitech\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "quansitech"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "hardykay",
+            "email": "hardykay@163.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "extra": {
+      "laravel": {
+        "providers": [
+          "quansitech\\Provider\\QscmfServiceProvider"
+        ]
+      }
+    }
+}

@@ -1,0 +1,16 @@
+/nbproject/
+/app/Runtime/
+/www/Uploads/
+/app/Uploads/
+/.idea
+/.vscode
+/www/wx_log.txt
+/vendor
+
+/app/Home/Controller/TestController.class.php
+/node_modules
+/www/Public/static/rev/
+
+/www/Public/libs
+
+.env
