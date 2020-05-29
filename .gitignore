@@ -6,6 +6,7 @@
 /.vscode
 /www/wx_log.txt
 /vendor
+/composer.lock
 
 /app/Home/Controller/TestController.class.php
 /node_modules

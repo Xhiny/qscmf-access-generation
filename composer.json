@@ -7,13 +7,15 @@
         "thinkphp3.2"
     ],
     "require": {
-        "php": ">=7.2.0",
-        "laravel/framework": "~5.8.0",
+        "tiderjian/think-core": "^11.0",
+        "funkjedi/composer-include-files": "^1.0",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "require-dev": {
         "phpunit/phpunit": "^8.0",
         "laravel/dusk": "^5.0",
         "mockery/mockery": "^1.2",
-        "fzaninotto/faker": "^1.4",
-        "doctrine/dbal": "2.*"
+        "fzaninotto/faker": "^1.4"
     },
     "autoload": {
         "psr-4": {
@@ -21,13 +23,17 @@
         }
     },
     "autoload-dev": {
+        "classmap": [
+            "lara\/database\/seeds",
+            "lara\/database\/factories"
+        ],
         "psr-4": {
-            "quansitech\\Tests\\": "tests/"
+            "Lara\\": "lara",
+            "App\\": "lara\/app",
+            "Lara\\Tests\\":"lara\/tests",
+            "quansitech\\dataGenerate\\": "src/data-generate"
         }
     },
-    "bin": [
-        "quansitech"
-    ],
     "license": "MIT",
     "authors": [
         {
@@ -36,11 +42,10 @@
         }
     ],
     "minimum-stability": "stable",
-    "extra": {
-      "laravel": {
-        "providers": [
-          "quansitech\\Provider\\QscmfServiceProvider"
-        ]
-      }
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
     }
 }

@@ -5,12 +5,20 @@ namespace quansitech\dataGenerate;
 
 
 use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Exception;
 
 class Access implements Generator
 {
     public static $role_id;
     public static $tableName= 'qs_access';
 
+    /**
+     * 权限点设置
+     * @param $data 二维数组需要添加权限点的数据
+     * @param $role_id  用户组id
+     * @param null $firstNode 模块名或模块id，默认为admin
+     * @throws \Exception
+     */
     public static function up($data, $role_id, $firstNode=null)
     {
         if (!empty($role_id)){
@@ -21,11 +29,13 @@ class Access implements Generator
         }
         // 注意这里新增的节点不会进行回滚操作，已存在的节点也不会创建
         Node::up($data, $firstNode);
-        /**
-         * 创建 $firstNode控制节点
-         */
         try{
             DB::beginTransaction();
+            /**
+             * 创建模块节点
+             */
+            $nodeMap = Node::getMap(Node::$module, 0, 1);
+            self::create($nodeMap);
             foreach ($data as $key => $value){
                 $nodeMap = Node::getMap($key, Node::$firstId, 2);
                 $controller = self::create($nodeMap);
@@ -44,9 +54,9 @@ class Access implements Generator
 
     /**
      * 回滚
-     * @param $data
-     * @param $role_id
-     * @param null $firstNode
+     * @param $data 二维数组需要添加权限点的数据
+     * @param $role_id  用户组id
+     * @param null $firstNode 模块名或模块id，默认为admin
      * @throws \Exception
      */
     public static function down($data, $role_id, $firstNode=null)
@@ -64,7 +74,7 @@ class Access implements Generator
                 $nodeMap = Node::getMap($key, Node::$firstId, 2);
                 $controller = Node::getOne($nodeMap);
                 $data = self::getMapForData($controller);
-                // 新增权限点
+                // 删除权限点
                 foreach ($value as $name=>$title){
                     $nodeMap = Node::getMap($name, $data['node_id'], 3);
                     $action = Node::getOne($nodeMap);
@@ -74,13 +84,41 @@ class Access implements Generator
                 /**
                  * 查询是否还存在子节点，不存在删除控制器
                  */
+                self::deleteParentNode($controller->id);
             }
+            /**
+             * 查询是否还存在子节点，不存在删除模块
+             */
+            self::deleteParentNode(Node::$firstId);
             DB::commit();
         }catch (\Exception $e){
             DB::rollBack();
             throw $e;
         }
 
+    }
+
+    /**
+     * 根据id查询是否存在子节点权限点，不存在则删除
+     * @param $nid
+     * @throws \Exception
+     */
+    public static function deleteParentNode($nid){
+        $node = Node::getOne(['id'=>$nid]);
+        if (empty($node)) {
+            throw new \Exception('node_id='.$nid.'is not exist!');
+        }
+        $ids = DB::table(Node::$tableName)->where('pid', $node->id)->pluck('id')->toArray();
+        if (empty($ids)){
+            $access = self::getMapForData($node);
+            self::delete($access);
+        } else {
+            $data = DB::table(self::$tableName)->whereIn('node_id', $ids)->where('role_id', self::$role_id)->first();
+            if (empty($data)){
+                $access = self::getMapForData($node);
+                self::delete($access);
+            }
+        }
     }
 
     /**
