@@ -4,6 +4,7 @@
 /app/Uploads/
 /.idea
 /.vscode
+/lara
 /www/wx_log.txt
 /vendor
 /composer.lock
